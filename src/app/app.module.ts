@@ -11,8 +11,8 @@ import { RouterModule, RouterOutlet, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
 import { CalculatorComponent } from './components/calculator/calculator.component';
 import { ShapesComponent } from './components/shapes/shapes.component';
-import { Shapes } from './components/shapes/shapes.utils';
-// import { ShapePropertiesComponent } from './components/shape-properties/shape-properties.component';
+import { CommonModule } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 const routes: Routes = [
   {
@@ -32,6 +32,7 @@ const routes: Routes = [
 @NgModule({
   declarations: [AppComponent, CalculatorComponent, ShapesComponent],
   imports: [
+    CommonModule,
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
@@ -42,6 +43,8 @@ const routes: Routes = [
     MatRadioModule,
     ReactiveFormsModule,
     RouterModule.forRoot(routes),
+    MatFormFieldModule,
+    MatInputModule,
   ],
   bootstrap: [AppComponent],
 })

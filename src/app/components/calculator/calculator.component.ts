@@ -28,7 +28,10 @@ import { Shapes } from '../shapes/shapes.utils';
         </mat-select>
       </mat-form-field>
       <ng-container *ngIf="selectedShape(); let shape">
-        <button mat-raised-button [routerLink]="getLink(shape.name)">
+        <button
+          mat-raised-button
+          [routerLink]="getLink(selectedCalculation(), shape.name)"
+        >
           Next
         </button>
       </ng-container>
@@ -53,7 +56,7 @@ export class CalculatorComponent {
     this.selectedShape.set(shape);
   }
 
-  getLink(shapeName: string): string {
-    return `${this.selectedCalculation()}/${shapeName}`;
+  getLink(calculationType: CalculateOptions, shapeName: string): string {
+    return `${calculationType}/${shapeName}`;
   }
 }

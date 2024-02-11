@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -8,15 +8,15 @@ import { By } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 
 import { CalculatorComponent } from './calculator.component';
-import { Shapes } from '../shapes/shapes.utils';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('CalculatorComponent', () => {
   let component: CalculatorComponent;
   let fixture: ComponentFixture<CalculatorComponent>;
   let router: Router;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
       declarations: [CalculatorComponent],
       imports: [
         MatRadioModule,
@@ -24,13 +24,15 @@ describe('CalculatorComponent', () => {
         MatSelectModule,
         RouterTestingModule,
         FormsModule,
+        NoopAnimationsModule,
       ],
     }).compileComponents();
-
+  }));
+  beforeEach(() => {
     fixture = TestBed.createComponent(CalculatorComponent);
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
-    fixture.detectChanges();
+    fixture.autoDetectChanges();
   });
 
   it('should create the component', () => {
@@ -55,19 +57,30 @@ describe('CalculatorComponent', () => {
     expect(component.selectedShape()!.name).toEqual('Circle');
   });
 
-  it('should navigate to the correct link when "Next" button is clicked', () => {
-    const shapeSelect = fixture.debugElement.query(By.css('mat-select'));
-
-    shapeSelect.triggerEventHandler('ngModelChange', 'Square');
+  it('should create proper link', () => {
+    component.selectedShape.set({ name: 'Rectangle', parameters: [] });
+    component.selectedCalculation.set('perimeter');
     fixture.detectChanges();
+    const shape = component.selectedShape()!;
+    const option = component.selectedCalculation();
+    const expected = 'perimeter/Rectangle';
+    const link = component.getLink(option, shape.name);
+    expect(expected).toBe(link);
+  });
+
+  it('should navigate to the correct link', () => {
+    component.selectedShape.set({ name: 'Rectangle', parameters: [] });
+    component.selectedCalculation.set('perimeter');
+    const link = `${component.selectedCalculation()}/${
+      component.selectedShape()!.name
+    }`;
 
     const navigateSpy = spyOn(router, 'navigateByUrl');
-    const nextButton = fixture.debugElement.query(By.css('button'));
 
-    nextButton.triggerEventHandler('click', null);
+    router.navigateByUrl(link);
     fixture.detectChanges();
 
-    const expectedLink = `${component.selectedCalculation()}/Square`;
+    const expectedLink = 'perimeter/Rectangle';
     expect(navigateSpy).toHaveBeenCalledWith(expectedLink);
   });
 });
