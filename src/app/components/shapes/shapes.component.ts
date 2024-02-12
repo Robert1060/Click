@@ -66,7 +66,7 @@ import { ActivatedRoute } from '@angular/router';
         <p class="text-lg font-semibold">Result</p>
         <p class="mt-2">
           Calculating {{ selectedCalculationOption() }} for {{ sh.name }} with
-          result of: {{ result() }}
+          result of: {{ res }}
         </p>
       </div>
     </div>
