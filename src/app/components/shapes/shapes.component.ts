@@ -1,9 +1,11 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CalculateOptions, Shape, ShapeParams } from 'src/app/model';
-import { Shapes, createShapeForm, roundResult } from './shapes.utils';
+import { Shapes, createShapeFormGroup, roundResult } from './shapes.utils';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { CalculateService } from 'src/app/services/calculator.service';
 import { ActivatedRoute } from '@angular/router';
+
+// Sorry for ugly formatting
 
 @Component({
   selector: 'app-shapes',
@@ -32,10 +34,10 @@ import { ActivatedRoute } from '@angular/router';
               shapeFormGroup.get(param.key)?.touched
             "
             class="text-red-500"
-            >Value needs to be positive and greater than 0</mat-hint
+            >Value needs to be greater than 0</mat-hint
           >
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field *ngIf="shapeFormGroup.get('includeRound')?.value">
           <mat-label>Round Result (Decimal Places)</mat-label>
           <input matInput type="number" formControlName="roundValue" />
           <mat-hint
@@ -49,6 +51,11 @@ import { ActivatedRoute } from '@angular/router';
             >Min round value is 0</mat-hint
           >
         </mat-form-field>
+
+        <mat-checkbox formControlName="includeRound">
+          Include rounding
+        </mat-checkbox>
+
         <button mat-raised-button type="submit">Calculate</button>
         <button mat-raised-button routerLink="">Back</button>
       </form>
@@ -84,8 +91,7 @@ export class ShapesComponent implements OnInit {
     if (shapeForm.invalid) {
       shapeForm.markAllAsTouched();
     } else {
-      const { roundValue, ...params } = shapeForm.value;
-
+      const { includeRound, roundValue, ...params } = shapeForm.value;
       const parameters: ShapeParams = {
         name: shape.name,
         params: {
@@ -93,7 +99,9 @@ export class ShapesComponent implements OnInit {
         },
       };
       const func = this.calculationService[this.selectedCalculationOption()];
-      const res = roundResult(func(parameters), roundValue);
+      const res = includeRound
+        ? roundResult(func(parameters), roundValue)
+        : func(parameters);
       this.result.set(res);
     }
   }
@@ -108,6 +116,6 @@ export class ShapesComponent implements OnInit {
     }
     this.selectedShape.set(shape);
     this.selectedCalculationOption.set(navigationState['calculation']);
-    this.shapeFormGroup = createShapeForm(shape, this.formBuilder);
+    this.shapeFormGroup = createShapeFormGroup(shape, this.formBuilder);
   }
 }

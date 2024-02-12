@@ -27,8 +27,8 @@ export class Shapes {
   ];
 }
 
-export function createShapeForm(shape: Shape, formBuilder: FormBuilder) {
-  const formConfig: { [key: string]: [key: number, any] } = {};
+export function createShapeFormGroup(shape: Shape, formBuilder: FormBuilder) {
+  const formConfig: { [key: string]: [key: number | boolean, any] } = {};
 
   shape.parameters.forEach((param) => {
     formConfig[param.key] = [
@@ -36,6 +36,8 @@ export function createShapeForm(shape: Shape, formBuilder: FormBuilder) {
       [Validators.required, positiveNumberValidator()],
     ];
   });
+
+  formConfig['includeRound'] = [false, [Validators.required]];
 
   formConfig['roundValue'] = [
     0,
@@ -45,23 +47,23 @@ export function createShapeForm(shape: Shape, formBuilder: FormBuilder) {
   return formBuilder.nonNullable.group(formConfig);
 }
 
-function positiveNumberValidator(): ValidatorFn {
+export function positiveNumberValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const value = control.value;
 
     if (isNaN(value) || value <= 0) {
       return { positiveNumber: true };
     }
+
     return null;
   };
 }
-
 export function roundResult(
   value: number,
   decimalPlaces: number | null
 ): number {
+  if (!decimalPlaces && decimalPlaces !== 0) return value;
   if (decimalPlaces === 0) return Math.round(value);
-  if (!decimalPlaces) return value;
   const multiplier = Math.pow(10, decimalPlaces);
   return Math.round(value * multiplier) / multiplier;
 }

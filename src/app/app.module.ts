@@ -6,7 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatRadioModule } from '@angular/material/radio';
-
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { RouterModule, RouterOutlet, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
 import { CalculatorComponent } from './components/calculator/calculator.component';
@@ -45,6 +45,7 @@ const routes: Routes = [
     RouterModule.forRoot(routes),
     MatFormFieldModule,
     MatInputModule,
+    MatCheckboxModule,
   ],
   bootstrap: [AppComponent],
 })
