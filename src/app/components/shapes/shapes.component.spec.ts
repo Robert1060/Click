@@ -4,7 +4,6 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
-import { CalculateService } from 'src/app/services/calculator.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
@@ -12,7 +11,6 @@ describe('ShapesComponent', () => {
   let component: ShapesComponent;
   let fixture: ComponentFixture<ShapesComponent>;
   let activatedRouteSnapshot: Partial<ActivatedRouteSnapshot>;
-  let calculateServiceSpy: jasmine.SpyObj<CalculateService>;
 
   beforeEach(() => {
     activatedRouteSnapshot = {
@@ -22,8 +20,6 @@ describe('ShapesComponent', () => {
       fragment: '',
       data: {},
     };
-
-    calculateServiceSpy = jasmine.createSpyObj('CalculateService', ['area']);
 
     TestBed.configureTestingModule({
       declarations: [ShapesComponent],
@@ -38,8 +34,7 @@ describe('ShapesComponent', () => {
         {
           provide: ActivatedRoute,
           useValue: { snapshot: activatedRouteSnapshot },
-        },
-        { provide: CalculateService, useValue: calculateServiceSpy },
+        }      
       ],
     }).compileComponents();
 

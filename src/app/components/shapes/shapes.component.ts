@@ -78,7 +78,7 @@ export class ShapesComponent implements OnInit {
   shapeFormGroup: FormGroup;
 
   selectedCalculationOption = signal<CalculateOptions>('area');
-  selectedShape = signal<Shape>(this.shapes[0]);
+  selectedShape = signal<Shape | null>(null);
   result = signal<number | null>(null);
 
   constructor(

@@ -83,4 +83,11 @@ describe('CalculatorComponent', () => {
     const expectedLink = 'perimeter/Rectangle';
     expect(navigateSpy).toHaveBeenCalledWith(expectedLink);
   });
+
+  it('should throw an error for invalid shape', () => {
+    expect(() => {
+      component.setSelectedShape('invalid');
+      fixture.detectChanges();
+    }).toThrowError('Shape not found');
+  });
 });

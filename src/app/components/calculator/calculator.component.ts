@@ -51,7 +51,7 @@ export class CalculatorComponent {
   setSelectedShape(event: string): void {
     const shape = this.shapes.find((s) => s.name === event);
     if (!shape) {
-      throw new Error('Unexpected error happened');
+      throw new Error('Shape not found');
     }
     this.selectedShape.set(shape);
   }
