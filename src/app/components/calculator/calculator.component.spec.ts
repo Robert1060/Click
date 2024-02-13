@@ -43,7 +43,6 @@ describe('CalculatorComponent', () => {
     const radioGroup = fixture.debugElement.query(By.css('mat-radio-group'));
 
     radioGroup.triggerEventHandler('ngModelChange', 'perimeter');
-    fixture.detectChanges();
 
     expect(component.selectedCalculation()).toEqual('perimeter');
   });
@@ -52,7 +51,6 @@ describe('CalculatorComponent', () => {
     const shapeSelect = fixture.debugElement.query(By.css('mat-select'));
 
     shapeSelect.triggerEventHandler('ngModelChange', 'Circle');
-    fixture.detectChanges();
 
     expect(component.selectedShape()!.name).toEqual('Circle');
   });
@@ -60,7 +58,7 @@ describe('CalculatorComponent', () => {
   it('should create proper link', () => {
     component.selectedShape.set({ name: 'Rectangle', parameters: [] });
     component.selectedCalculation.set('perimeter');
-    fixture.detectChanges();
+
     const shape = component.selectedShape()!;
     const option = component.selectedCalculation();
     const expected = 'perimeter/Rectangle';
@@ -78,16 +76,12 @@ describe('CalculatorComponent', () => {
     const navigateSpy = spyOn(router, 'navigateByUrl');
 
     router.navigateByUrl(link);
-    fixture.detectChanges();
-
+  
     const expectedLink = 'perimeter/Rectangle';
     expect(navigateSpy).toHaveBeenCalledWith(expectedLink);
   });
 
   it('should throw an error for invalid shape', () => {
-    expect(() => {
-      component.setSelectedShape('invalid');
-      fixture.detectChanges();
-    }).toThrowError('Shape not found');
+    expect(() => component.setSelectedShape('invalid')).toThrowError('Shape not found');
   });
 });
