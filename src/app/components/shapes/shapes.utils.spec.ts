@@ -5,6 +5,7 @@ import {
   createShapeFormGroup,
   roundResult,
   positiveNumberValidator,
+  isProperCalculateOption,
 } from './shapes.utils';
 
 describe('Shapes Utils', () => {
@@ -109,6 +110,20 @@ describe('Shapes Utils', () => {
       const result = roundResult(value, null);
 
       expect(result).toBe(value);
+    });
+  });
+  describe('proper calculation option', () => {
+    it('should return true for area', () => {
+      const result = isProperCalculateOption('area');
+      expect(result).toBeTrue();
+    });
+    it('should return true for perimeter', () => {
+      const res = isProperCalculateOption('perimeter');
+      expect(res).toBeTrue();
+    });
+    it('should return false for invalid option', () => {
+      const res = isProperCalculateOption('ClickMe');
+      expect(res).toBeFalse();
     });
   });
 });

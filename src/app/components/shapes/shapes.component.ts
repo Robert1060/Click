@@ -1,8 +1,16 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CalculateOptions, Shape, ShapeParams } from 'src/app/model';
-import { Shapes, createShapeFormGroup, roundResult } from './shapes.utils';
+import {
+  Shapes,
+  createShapeFormGroup,
+  isProperCalculateOption,
+} from './shapes.utils';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { CalculateService } from 'src/app/services/calculator.service';
+import {
+  AreaCalculation,
+  PerimeterCalculation,
+  ShapeStrategy,
+} from 'src/app/services/calculator-strategy';
 import { ActivatedRoute } from '@angular/router';
 
 // Sorry for ugly formatting
@@ -83,7 +91,6 @@ export class ShapesComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private calculationService: CalculateService,
     private route: ActivatedRoute
   ) {}
 
@@ -98,11 +105,29 @@ export class ShapesComponent implements OnInit {
           ...params,
         },
       };
-      const func = this.calculationService[this.selectedCalculationOption()];
-      const res = includeRound
-        ? roundResult(func(parameters), roundValue)
-        : func(parameters);
-      this.result.set(res);
+
+      const calculateOption = this.selectedCalculationOption();
+      if (isProperCalculateOption(calculateOption)) {
+        if (calculateOption === 'area') {
+          const strategy = new ShapeStrategy(
+            parameters,
+            new AreaCalculation(),
+            includeRound,
+            roundValue
+          );
+          this.result.set(strategy.getResult());
+        } else {
+          const strategy = new ShapeStrategy(
+            parameters,
+            new PerimeterCalculation(),
+            includeRound,
+            roundValue
+          );
+          this.result.set(strategy.getResult());
+        }
+      } else {
+        throw new Error('Invalid calculation option');
+      }
     }
   }
 

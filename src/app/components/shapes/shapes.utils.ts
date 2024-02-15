@@ -5,7 +5,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { Shape } from 'src/app/model';
+import { CalculateOptions, Shape } from 'src/app/model';
 
 export class Shapes {
   public shapesTypes: Shape[] = [
@@ -66,4 +66,8 @@ export function roundResult(
   if (decimalPlaces === 0) return Math.round(value);
   const multiplier = Math.pow(10, decimalPlaces);
   return Math.round(value * multiplier) / multiplier;
+}
+
+export function isProperCalculateOption(el: any): el is CalculateOptions {
+  return el === 'area' || el === 'perimeter';
 }
