@@ -1,7 +1,7 @@
 import { roundResult } from '../components/shapes/shapes.utils';
 import { AreaShapeParams, PerimeterShapeParams, ShapeParams } from '../model';
 
-export interface Calculation {
+interface Calculation {
   calculate(params: ShapeParams): number;
 }
 
