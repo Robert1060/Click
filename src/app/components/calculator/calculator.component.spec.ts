@@ -52,36 +52,38 @@ describe('CalculatorComponent', () => {
 
     shapeSelect.triggerEventHandler('ngModelChange', 'Circle');
 
-    expect(component.selectedShape()!.name).toEqual('Circle');
+    expect(component.selectedShapeName()).toEqual('Circle');
   });
 
   it('should create proper link', () => {
-    component.selectedShape.set({ name: 'Rectangle', parameters: [] });
+    component.selectedShapeName.set('Rectangle');
     component.selectedCalculation.set('perimeter');
 
-    const shape = component.selectedShape()!;
+    const shapeName = component.selectedShapeName()!;
     const option = component.selectedCalculation();
     const expected = 'perimeter/Rectangle';
-    const link = component.getLink(option, shape.name);
+    const link = component.getLink(option, shapeName);
     expect(expected).toBe(link);
   });
 
   it('should navigate to the correct link', () => {
-    component.selectedShape.set({ name: 'Rectangle', parameters: [] });
+    component.selectedShapeName.set('Rectangle');
     component.selectedCalculation.set('perimeter');
-    const link = `${component.selectedCalculation()}/${
-      component.selectedShape()!.name
-    }`;
+    const link = `${component.selectedCalculation()}/${component.selectedShapeName()}`;
 
     const navigateSpy = spyOn(router, 'navigateByUrl');
 
     router.navigateByUrl(link);
-  
+
     const expectedLink = 'perimeter/Rectangle';
     expect(navigateSpy).toHaveBeenCalledWith(expectedLink);
   });
 
   it('should throw an error for invalid shape', () => {
-    expect(() => component.setSelectedShape('invalid')).toThrowError('Shape not found');
+    expect(() => component.setSelectedShape('invalid' as any)).toThrowError(
+      'Shape not found'
+    );
+    spyOn(component.selectedShapeName, 'set');
+    expect(component.selectedShapeName.set).not.toHaveBeenCalled();
   });
 });

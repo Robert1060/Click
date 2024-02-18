@@ -11,17 +11,55 @@ export class Shapes {
   public shapesTypes: Shape[] = [
     {
       name: 'Circle',
+      calcType: 'area',
+      parameters: [{ key: 'radius', label: 'Radius' }],
+    },
+    {
+      name: 'Circle',
+      calcType: 'perimeter',
       parameters: [{ key: 'radius', label: 'Radius' }],
     },
     {
       name: 'Square',
+      calcType: 'area',
+      parameters: [{ key: 'sideLength', label: 'Side Length' }],
+    },
+    {
+      name: 'Square',
+      calcType: 'perimeter',
       parameters: [{ key: 'sideLength', label: 'Side Length' }],
     },
     {
       name: 'Rectangle',
+      calcType: 'area',
       parameters: [
         { key: 'length', label: 'Length' },
         { key: 'width', label: 'Width' },
+      ],
+    },
+    {
+      name: 'Rectangle',
+      calcType: 'perimeter',
+      parameters: [
+        { key: 'length', label: 'Length' },
+        { key: 'width', label: 'Width' },
+      ],
+    },
+    {
+      name: 'Triangle',
+      calcType: 'area',
+      parameters: [
+        { key: 'baseLength', label: 'Base Length' },
+        { key: 'height', label: 'Height' },
+      ],
+    },
+    {
+      name: 'Triangle',
+      calcType: 'perimeter',
+      parameters: [
+        { key: 'firstSideLength', label: 'First Side Length' },
+        { key: 'secondSideLength', label: 'Second Side Length' },
+        { key: 'thirdSideLength', label: 'Third Side Length' },
       ],
     },
   ];

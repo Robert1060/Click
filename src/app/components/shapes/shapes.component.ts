@@ -9,7 +9,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import {
   AreaCalculation,
   PerimeterCalculation,
-  ShapeStrategy,
+  Context,
 } from 'src/app/services/calculator-strategy';
 import { ActivatedRoute } from '@angular/router';
 
@@ -24,7 +24,7 @@ import { ActivatedRoute } from '@angular/router';
     >
       <form
         [formGroup]="shapeFormGroup"
-        (submit)="calculate(sh, shapeFormGroup)"
+        (submit)="calculate(sh, shapeFormGroup, selectedCalculationOption())"
         class="flex flex-col gap-4"
       >
         <mat-form-field *ngFor="let param of sh.parameters">
@@ -94,36 +94,36 @@ export class ShapesComponent implements OnInit {
     private route: ActivatedRoute
   ) {}
 
-  calculate(shape: Shape, shapeForm: FormGroup) {
+  calculate(
+    shape: Shape,
+    shapeForm: FormGroup,
+    calculateOption: CalculateOptions
+  ): void {
     if (shapeForm.invalid) {
       shapeForm.markAllAsTouched();
     } else {
       const { includeRound, roundValue, ...params } = shapeForm.value;
-      const parameters: ShapeParams = {
-        name: shape.name,
-        params: {
-          ...params,
-        },
-      };
-
-      const calculateOption = this.selectedCalculationOption();
       if (isProperCalculateOption(calculateOption)) {
-        if (calculateOption === 'area') {
-          const strategy = new ShapeStrategy(
-            parameters,
-            new AreaCalculation(),
-            includeRound,
-            roundValue
-          );
-          this.result.set(strategy.getResult());
-        } else {
-          const strategy = new ShapeStrategy(
-            parameters,
-            new PerimeterCalculation(),
-            includeRound,
-            roundValue
-          );
-          this.result.set(strategy.getResult());
+        const parameters: ShapeParams = {
+          name: shape.name,
+          calcType: calculateOption,
+          params: {
+            ...params,
+          },
+        };
+        switch (calculateOption) {
+          case 'area':
+            const areaShape = new Context(new AreaCalculation());
+            this.result.set(
+              areaShape.getResult(parameters, includeRound, roundValue)
+            );
+            break;
+          case 'perimeter':
+            const perimeterShape = new Context(new PerimeterCalculation());
+            this.result.set(
+              perimeterShape.getResult(parameters, includeRound, roundValue)
+            );
+            break;
         }
       } else {
         throw new Error('Invalid calculation option');
@@ -133,14 +133,24 @@ export class ShapesComponent implements OnInit {
 
   ngOnInit(): void {
     const navigationState = this.route.snapshot.params;
+    const calculationSnapshot = navigationState['calculation'];
+    const shapeNameSnapshot = navigationState['shape'];
+
+    if (!isProperCalculateOption(calculationSnapshot)) {
+      throw new Error(`${calculationSnapshot} is not supported`);
+    }
+
     const shape = this.shapes.find(
-      (sh) => sh.name === navigationState['shape']
+      (sh) =>
+        sh.name === shapeNameSnapshot && sh.calcType === calculationSnapshot
     );
     if (!shape) {
-      throw new Error('Shape not found');
+      throw new Error(`${shapeNameSnapshot} is not supported`);
     }
+
     this.selectedShape.set(shape);
-    this.selectedCalculationOption.set(navigationState['calculation']);
+
+    this.selectedCalculationOption.set(calculationSnapshot);
     this.shapeFormGroup = createShapeFormGroup(shape, this.formBuilder);
   }
 }

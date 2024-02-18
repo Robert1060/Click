@@ -1,6 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { CalculateOptions, Shape } from '../../model';
-import { Shapes } from '../shapes/shapes.utils';
+import { CalculateOptions, ShapesTypes } from '../../model';
 
 @Component({
   selector: 'app-calculator',
@@ -19,18 +18,20 @@ import { Shapes } from '../shapes/shapes.utils';
       <mat-form-field>
         <mat-label>Choose Shape:</mat-label>
         <mat-select
-          [ngModel]="selectedShape()?.name"
+          [ngModel]="selectedShapeName()"
           (ngModelChange)="setSelectedShape($event)"
         >
-          <mat-option *ngFor="let shape of shapes" [value]="shape.name">{{
-            shape.name
-          }}</mat-option>
+          <mat-option
+            *ngFor="let shapeName of typesOfShapes"
+            [value]="shapeName"
+            >{{ shapeName }}</mat-option
+          >
         </mat-select>
       </mat-form-field>
-      <ng-container *ngIf="selectedShape(); let shape">
+      <ng-container *ngIf="selectedShapeName(); let shapeName">
         <button
           mat-raised-button
-          [routerLink]="getLink(selectedCalculation(), shape.name)"
+          [routerLink]="getLink(selectedCalculation(), shapeName)"
         >
           Next
         </button>
@@ -39,8 +40,8 @@ import { Shapes } from '../shapes/shapes.utils';
   `,
 })
 export class CalculatorComponent {
-  shapes = new Shapes().shapesTypes;
-  selectedShape = signal<Shape | null>(null);
+  typesOfShapes = ['Circle', 'Square', 'Rectangle', 'Triangle'] as const;
+  selectedShapeName = signal<ShapesTypes | null>(null);
 
   selectedCalculation = signal<CalculateOptions>('area');
 
@@ -48,12 +49,9 @@ export class CalculatorComponent {
     this.selectedCalculation.set(event);
   }
 
-  setSelectedShape(event: string): void {
-    const shape = this.shapes.find((s) => s.name === event);
-    if (!shape) {
-      throw new Error('Shape not found');
-    }
-    this.selectedShape.set(shape);
+  setSelectedShape(event: ShapesTypes): void {
+    if (!this.typesOfShapes.includes(event)) throw new Error('Shape not found');
+    this.selectedShapeName.set(event);
   }
 
   getLink(calculationType: CalculateOptions, shapeName: string): string {
